@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDto> searchItems(String text) {
         if (text.isBlank()) return new ArrayList<>();
-        return repository.itemsSearch(text.trim()).stream()
+        return repository.itemsSearch(text.toLowerCase()).stream()
                 .map(mapper::toDto).collect(Collectors.toList());
     }
 

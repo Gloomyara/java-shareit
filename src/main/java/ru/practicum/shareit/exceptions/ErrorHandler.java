@@ -4,9 +4,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = EntityAlreadyExistException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -28,7 +28,8 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = {EntityNotFoundException.class, ConstraintViolationException.class})
+    @ExceptionHandler(value = {EntityNotFoundException.class,
+            ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleNotFoundOrIncorrectPathVariable(
             RuntimeException e, WebRequest request) {
@@ -38,7 +39,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = IllegalArgumentException.class)
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleIllegalArgumentException(
             IllegalArgumentException e, WebRequest request) {

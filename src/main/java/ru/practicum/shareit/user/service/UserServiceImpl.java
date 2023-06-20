@@ -26,10 +26,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getById(Long id) {
+        return repository.getById(id).orElse(null);
+    }
+    @Override
     public User patch(Long id, UserDto userDto) {
-        User user = mapper.toObject(userDto);
-        user.setId(id);
-        return repository.patch(user);
+        repository.containsOrElseThrow(id);
+        return repository.patch(id, userDto);
     }
 
     @Override

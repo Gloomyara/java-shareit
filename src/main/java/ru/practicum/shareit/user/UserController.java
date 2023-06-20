@@ -13,26 +13,34 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserService service;
 
     @GetMapping
     public Collection<User> getAllUsers() {
-        return userService.getAllUsers();
+        return service.getAllUsers();
+    }
+
+    @GetMapping("/{userId}")
+    public User getById(@PathVariable Long userId) {
+        return service.getById(userId);
     }
 
     @PostMapping
     public User saveNewUser(@RequestBody @Valid UserDto userDto) {
-        return userService.saveUser(userDto);
+        if (userDto.getEmail() == null) {
+            throw new IllegalArgumentException("Error! Email cannot be null");
+        }
+        return service.saveUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public User patchUser(@PathVariable Long userId,
                           @RequestBody @Valid UserDto userDto) {
-        return userService.patch(userId, userDto);
+        return service.patch(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
-        userService.delete(userId);
+        service.delete(userId);
     }
 }

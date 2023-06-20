@@ -43,10 +43,10 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (items.containsKey(item.getOwnerId()) &&
                 items.get(item.getOwnerId()).containsKey(itemId)) {
             Item oldItem = items.get(item.getOwnerId()).get(itemId);
-            if (!item.getName().isBlank()) {
+            if (item.getName() != null && !item.getName().isBlank()) {
                 oldItem.setName(item.getName());
             }
-            if (!item.getDescription().isBlank()) {
+            if (item.getDescription() != null && !item.getDescription().isBlank()) {
                 oldItem.setDescription(item.getDescription());
             }
             if (item.getAvailable() != null) {
@@ -62,17 +62,25 @@ public class ItemRepositoryImpl implements ItemRepository {
         return items.values().stream()
                 .map(Map::values)
                 .flatMap(Collection::stream)
-                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()))
                 .filter(Item::getAvailable)
+                .filter(item -> item.getName().toLowerCase().contains(text) ||
+                        item.getDescription().toLowerCase().contains(text))
                 .limit(10)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Item deleteByUserIdAndItemId(long userId, long itemId) {
+    public void deleteByUserIdAndItemId(long userId, long itemId) {
         if (items.containsKey(userId)) {
-            return items.get(userId).remove(itemId);
+            owners.remove(itemId);
+            items.get(userId).remove(itemId);
         }
-        return null;
+    }
+
+    @Override
+    public void deleteByUserId(long userId) {
+        items.remove(userId).values().stream()
+                .map(Item::getId)
+                .map(owners::remove);
     }
 }

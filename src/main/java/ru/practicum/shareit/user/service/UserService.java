@@ -10,6 +10,8 @@ public interface UserService {
 
     User saveUser(UserDto userDto);
 
+    User getById(Long id);
+
     User patch(Long id, UserDto userDto);
 
     void delete(Long id);
