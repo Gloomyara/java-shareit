@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     public User getById(Long id) {
         return repository.getById(id).orElse(null);
     }
+
     @Override
     public User patch(Long id, UserDto userDto) {
         repository.containsOrElseThrow(id);
