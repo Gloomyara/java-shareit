@@ -79,8 +79,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public void deleteByUserId(long userId) {
-        items.remove(userId).values().stream()
-                .map(Item::getId)
-                .map(owners::remove);
+        if (items.containsKey(userId)) {
+            items.remove(userId).values().stream()
+                    .map(Item::getId)
+                    .map(owners::remove);
+        }
     }
 }
