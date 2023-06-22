@@ -1,17 +1,19 @@
 package ru.practicum.shareit.item.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class ItemRepositoryImpl implements ItemRepository {
     private final Map<Long, Map<Long, Item>> items = new HashMap<>();
-    private final Map<Long, Long> owners = new HashMap<>();
-    private Long lastId = 1L;
+    private final AtomicLong lastId = new AtomicLong(1);
 
     @Override
     public Collection<Item> findByUserId(long userId) {
@@ -20,29 +22,33 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item save(Item item) {
-        item.setId(lastId++);
-        items.compute(item.getOwnerId(), (userId, userItems) -> {
+        item.setId(lastId.getAndIncrement());
+        items.compute(item.getOwner().getId(), (userId, userItems) -> {
             if (userItems == null) {
                 userItems = new HashMap<>();
             }
             userItems.put(item.getId(), item);
             return userItems;
         });
-        owners.put(item.getId(), item.getOwnerId());
         return item;
     }
 
     @Override
     public Optional<Item> getById(long itemId) {
-        return Optional.ofNullable(items.get(owners.get(itemId)).get(itemId));
+        return items.values().stream()
+                .map(Map::values)
+                .flatMap(Collection::stream)
+                .filter(item -> item.getId() == itemId)
+                .findFirst();
     }
 
     @Override
     public Item patch(Item item) {
+        long userId = item.getOwner().getId();
         long itemId = item.getId();
-        if (items.containsKey(item.getOwnerId()) &&
-                items.get(item.getOwnerId()).containsKey(itemId)) {
-            Item oldItem = items.get(item.getOwnerId()).get(itemId);
+        if (items.containsKey(userId) &&
+                items.get(userId).containsKey(itemId)) {
+            Item oldItem = items.get(userId).get(itemId);
             if (item.getName() != null && !item.getName().isBlank()) {
                 oldItem.setName(item.getName());
             }
@@ -54,7 +60,8 @@ public class ItemRepositoryImpl implements ItemRepository {
             }
             return oldItem;
         }
-        throw new EntityNotFoundException("Item not found");
+        log.warn("Item not found {}", item);
+        throw new EntityNotFoundException("Item not found " + item);
     }
 
     @Override
@@ -72,17 +79,12 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public void deleteByUserIdAndItemId(long userId, long itemId) {
         if (items.containsKey(userId)) {
-            owners.remove(itemId);
             items.get(userId).remove(itemId);
         }
     }
 
     @Override
     public void deleteByUserId(long userId) {
-        if (items.containsKey(userId)) {
-            items.remove(userId).values().stream()
-                    .map(Item::getId)
-                    .map(owners::remove);
-        }
+        items.remove(userId);
     }
 }
