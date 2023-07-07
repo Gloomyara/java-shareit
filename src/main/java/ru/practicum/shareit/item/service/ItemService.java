@@ -1,20 +1,19 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.abstraction.userreference.service.UserReferenceService;
+import ru.practicum.shareit.item.comment.dto.CommentDtoIn;
+import ru.practicum.shareit.item.comment.dto.CommentDtoOut;
+import ru.practicum.shareit.item.dto.ItemDtoIn;
+import ru.practicum.shareit.item.dto.ItemDtoOut;
 
-import java.util.Collection;
+import java.util.List;
 
-public interface ItemService {
+public interface ItemService extends UserReferenceService<ItemDtoIn, ItemDtoOut> {
 
-    ItemDto patch(long userId, long itemId, ItemDto itemDto);
+    ItemDtoOut findById(Long itemId, Long userId);
 
-    ItemDto getById(long itemId);
+    List<ItemDtoOut> searchByText(String text);
 
-    Collection<ItemDto> searchItems(String text);
+    CommentDtoOut createComment(Long itemId, Long userId, CommentDtoIn commentDtoIn);
 
-    ItemDto addNewItem(long userId, ItemDto itemDto);
-
-    Collection<ItemDto> getItems(long userId);
-
-    void deleteItem(long userId, long itemId);
 }

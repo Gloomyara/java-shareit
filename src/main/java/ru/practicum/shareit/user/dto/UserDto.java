@@ -1,16 +1,30 @@
 package ru.practicum.shareit.user.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.practicum.shareit.abstraction.model.Identified;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
-@Builder
 @Data
-public class UserDto {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDto implements Identified {
 
+    @Positive
     private Long id;
-    @Email
-    private String email;
+
+    @NotBlank
     private String name;
+
+    @Email
+    @NotNull
+    private String email;
+
 }

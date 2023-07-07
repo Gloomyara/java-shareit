@@ -1,24 +1,33 @@
 package ru.practicum.shareit.item.repository;
 
-
+import org.springframework.data.jpa.repository.Query;
+import ru.practicum.shareit.abstraction.userreference.repository.UserReferenceRepository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
-public interface ItemRepository {
+public interface ItemRepository extends UserReferenceRepository<Item> {
 
-    Collection<Item> findByUserId(long userId);
+    void deleteByUserId(Long userId);
 
-    Optional<Item> getById(long itemId);
+    List<Item> findAllByNameContainsIgnoreCaseOrDescriptionContainsIgnoreCaseAndAvailableIsTrue(
+            String name, String description);
 
-    Item patch(Item item);
+    @Query("select it from Item it " +
+            "JOIN FETCH it.user " +
+            "where it.id = ?1")
+    Optional<Item> findByIdWithUser(Long itemId);
 
-    Collection<Item> itemsSearch(String text);
+    @Query("select it from Item it " +
+            "LEFT JOIN FETCH it.comments " +
+            "where it.user.id = ?1")
+    List<Item> findAllByUserIdWithComments(Long userId);
 
-    Item save(Item item);
+    @Query("select it from Item it " +
+            "LEFT JOIN FETCH it.user " +
+            "LEFT JOIN FETCH it.comments " +
+            "where it.id = ?1")
+    Optional<Item> findByIdWithUserAndComments(Long itemId);
 
-    void deleteByUserIdAndItemId(long userId, long itemId);
-
-    void deleteByUserId(long userId);
 }
