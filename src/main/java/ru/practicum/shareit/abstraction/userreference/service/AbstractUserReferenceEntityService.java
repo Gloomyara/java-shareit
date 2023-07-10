@@ -72,7 +72,7 @@ public abstract class AbstractUserReferenceEntityService<I extends Identified, O
         return userRepository.existsById(userId);
     }
 
-    public void ObjectOwnerCheck(Long objectId, Long userId) {
+    public void checkObjectOwner(Long objectId, Long userId) {
         E e = objectRepository.findById(objectId).orElseThrow(EntityNotFoundException::new);
         if (!e.getUser().getId().equals(userId)) {
             throw new ObjectOwnerException("Error! User id:" + userId + " is not own the object id: " + objectId);

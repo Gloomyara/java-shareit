@@ -21,6 +21,6 @@ public interface UserReferenceService<I extends Identified, O> {
 
     boolean userExistsById(Long userId);
 
-    void ObjectOwnerCheck(Long objectId, Long userId);
+    void checkObjectOwner(Long objectId, Long userId);
 
 }

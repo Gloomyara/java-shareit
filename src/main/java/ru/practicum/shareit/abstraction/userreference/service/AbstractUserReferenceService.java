@@ -47,9 +47,10 @@ public class AbstractUserReferenceService<I extends Identified, O, E extends Use
 
     @Override
     public O patch(Long id, Map<String, Object> fields, Long userId) {
-        ObjectOwnerCheck(id, userId);
+        checkObjectOwner(id, userId);
         return toDto(patchUserReference(id, fields));
     }
+
 
     protected void checkUserId(Long userId) {
         if (!userExistsById(userId)) {
