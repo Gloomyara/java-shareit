@@ -80,6 +80,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<BookingShort> findTopByItemIdAndStatusAndStartAfterOrderByStart(
             Long itemId, Status status, LocalDateTime time);
 
+    /*@Query("select b.id, b.booker.id, b.item.id, b.start as start from Booking b " +
+            "where b.booker.id = ?1 " +
+            "and b.status = 'APPROVED' " +
+            "and b.start <= CURRENT_TIMESTAMP " +
+            "group by b.item.id " +
+            "having b.start = MAX(start)")
+    как только не пробовал, без nativeQuery не получается лист получить*/
     @Query(nativeQuery = true,
             value = "select b.id as id, b.booker_id as bookerId, b.item_id as itemId " +
                     "from booking b " +
@@ -91,8 +98,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "and start_time <= CURRENT_TIMESTAMP " +
                     "group by item_id) as l on b.item_id = l.item_id " +
                     "and b.start_time = l.max")
-    List<BookingShort> findLastBookingsByOwnerId(Long itemOwnerId, List<Long> ItemIds);
+    List<BookingShort> findLastBookingsByOwnerId(Long itemOwnerId);
 
+    /*@Query("select b.id, b.booker.id, b.item.id, b.start as start from Booking b " +
+            "where b.booker.id = ?1 " +
+            "and b.status = 'APPROVED' " +
+            "and b.start >= CURRENT_TIMESTAMP " +
+            "group by b.item.id " +
+            "having b.start = MIN(start)")
+    как только не пробовал, без nativeQuery не получается лист получить*/
     @Query(nativeQuery = true,
             value = "select b.id as id, b.booker_id as bookerId, b.item_id as itemId " +
                     "from booking b " +
@@ -104,5 +118,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "and start_time >= CURRENT_TIMESTAMP " +
                     "group by item_id) as n on b.item_id = n.item_id " +
                     "and b.start_time = n.min")
-    List<BookingShort> findNextBookingsByOwnerId(Long itemOwnerId, List<Long> ItemIds);
+    List<BookingShort> findNextBookingsByOwnerId(Long itemOwnerId);
 }

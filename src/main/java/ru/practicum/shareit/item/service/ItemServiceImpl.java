@@ -89,9 +89,8 @@ public class ItemServiceImpl extends AbstractUserReferenceService<Item> implemen
     public List<ItemDtoOut> findAllByOwnerId(Long userId) {
         checkUserId(userId);
         List<Item> items = itemRepository.findAllByOwnerIdWithComments(userId);
-        List<Long> itemIds = items.stream().map(Item::getId).distinct().collect(Collectors.toList());
-        List<BookingShort> lastBookings = bookingRepository.findLastBookingsByOwnerId(userId, itemIds);
-        List<BookingShort> nextBookings = bookingRepository.findNextBookingsByOwnerId(userId, itemIds);
+        List<BookingShort> lastBookings = bookingRepository.findLastBookingsByOwnerId(userId);
+        List<BookingShort> nextBookings = bookingRepository.findNextBookingsByOwnerId(userId);
         return mergeToItemDtoOut(items, lastBookings, nextBookings);
     }
 
