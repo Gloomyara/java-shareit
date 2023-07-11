@@ -21,17 +21,17 @@ public class UserControllerImpl implements UserController {
     private final UserService service;
 
     public List<UserDto> getAll() {
-        log.debug("Получен запрос на получение списка всех пользователей");
+        log.info("Получен запрос на получение списка всех пользователей");
         return service.findAll();
     }
 
     public UserDto getById(Long id) {
-        log.debug("Получен запрос на получение данных о пользователе: {}", id);
+        log.info("Получен запрос на получение данных о пользователе: {}", id);
         return service.findById(id);
     }
 
     public UserDto post(UserDto userDto) {
-        log.debug("Получен запрос на регистрацию пользователя: {}", userDto);
+        log.info("Получен запрос на регистрацию пользователя: {}", userDto);
         if (userDto.getEmail() == null) {
             log.warn("Error! Email cannot be null. {}", userDto);
             throw new IllegalArgumentException("Error! Email cannot be null");
@@ -40,17 +40,17 @@ public class UserControllerImpl implements UserController {
     }
 
     public UserDto put(UserDto userDto) {
-        log.debug("Получен запрос на обновление данных о пользователе: {}", userDto);
+        log.info("Получен запрос на обновление данных о пользователе: {}", userDto);
         return service.update(userDto);
     }
 
-    public UserDto patch(Long id, Map<String, Object> updatedFields) {
-        log.debug("Получен запрос на обновление данных о пользователе ид: {}, {}", id, updatedFields);
-        return service.patch(id, updatedFields);
+    public UserDto patch(Long id, Map<String, Object> fields) {
+        log.info("Получен запрос на обновление данных о пользователе ид: {}, {}", id, fields);
+        return service.patch(id, fields);
     }
 
     public void delete(Long id) {
-        log.debug("Получен запрос на удаление данных о пользователе: {}", id);
+        log.info("Получен запрос на удаление данных о пользователе: {}", id);
         service.delete(id);
     }
 }

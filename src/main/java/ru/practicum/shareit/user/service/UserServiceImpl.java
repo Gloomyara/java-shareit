@@ -40,10 +40,10 @@ public class UserServiceImpl extends AbstractService<UserDto, UserDto, User> imp
     }
 
     @Transactional
-    public UserDto patch(Long id, Map<String, Object> updatedFields) {
+    public UserDto patch(Long id, Map<String, Object> fields) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        checkUserEmail(String.valueOf(updatedFields.get("email")), user);
-        return toDto(userRepository.save(tryUpdateFields(user, updatedFields)));
+        checkUserEmail(String.valueOf(fields.get("email")), user);
+        return toDto(userRepository.save(tryUpdateFields(user, fields)));
     }
 
     @Transactional(readOnly = true)

@@ -18,9 +18,9 @@ public abstract class AbstractService<I, O, E extends Identified> {
     protected final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    protected E tryUpdateFields(E entity, Map<String, Object> updatedFields) {
+    protected E tryUpdateFields(E entity, Map<String, Object> fields) {
         try {
-            return objectMapper.updateValue(entity, updatedFields);
+            return objectMapper.updateValue(entity, fields);
         } catch (JsonMappingException e) {
             throw new JsonUpdateFieldsException(
                     String.format("Error! Unable update %s fields", entity.getClass().getSimpleName()));

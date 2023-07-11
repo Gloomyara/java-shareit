@@ -59,7 +59,7 @@ public interface BookingRepository extends UserReferenceRepository<Booking> {
 
     @Query(bookingJql + "where b.item.user.id = ?1 " +
             "and CURRENT_TIMESTAMP between b.start and b.end")
-    List<Booking> findAllByOwnerIdTimestampsBetweenStartAndEnd(Long userId, Sort sort);
+    List<Booking> findAllByOwnerIdWithTimestampsBetweenStartAndEnd(Long userId, Sort sort);
 
     @Query(bookingJql + "where b.user.id = ?1 " +
             "and b.status = ?2")
@@ -69,22 +69,24 @@ public interface BookingRepository extends UserReferenceRepository<Booking> {
             "and b.status = ?2")
     List<Booking> findBookingsByOwnerIdAndStatus(Long userId, Status status, Sort sort);
 
-    @Query(value = "select id, user_id as bookerId, item_id as itemId " +
-            "from booking " +
-            "where item_id = ?1 " +
-            "and status = 'APPROVED' " +
-            "and start_time <= CURRENT_TIMESTAMP " +
-            "order by start_time desc " +
-            "limit 1 ", nativeQuery = true)
+    @Query(nativeQuery = true,
+            value = "select id, user_id as bookerId, item_id as itemId " +
+                    "from booking " +
+                    "where item_id = ?1 " +
+                    "and status = 'APPROVED' " +
+                    "and start_time <= CURRENT_TIMESTAMP " +
+                    "order by start_time desc " +
+                    "limit 1")
     Optional<BookingShort> findLastBookingByItemId(Long itemId);
 
-    @Query(value = "select id, user_id as bookerId, item_id as itemId " +
-            "from booking " +
-            "where item_id = ?1 " +
-            "and status = 'APPROVED' " +
-            "and start_time >= CURRENT_TIMESTAMP " +
-            "order by start_time " +
-            "limit 1 ", nativeQuery = true)
+    @Query(nativeQuery = true,
+            value = "select id, user_id as bookerId, item_id as itemId " +
+                    "from booking " +
+                    "where item_id = ?1 " +
+                    "and status = 'APPROVED' " +
+                    "and start_time >= CURRENT_TIMESTAMP " +
+                    "order by start_time " +
+                    "limit 1")
     Optional<BookingShort> findNextBookingByItemId(Long itemId);
 
     @Query(nativeQuery = true,

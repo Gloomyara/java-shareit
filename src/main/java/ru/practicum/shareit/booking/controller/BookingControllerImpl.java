@@ -23,39 +23,39 @@ public class BookingControllerImpl implements BookingController {
 
     @Override
     public List<BookingDtoOut> getAllByBookerId(Long userId, State state) {
-        log.debug("Получен запрос на получение списка предметов, " +
+        log.info("Получен запрос на получение списка предметов, " +
                 "которые брались в аренду пользователем ид: {}", userId);
         return bookingService.findAllByBookerId(userId, state);
     }
 
     @Override
     public List<BookingDtoOut> getAllByOwnerId(Long userId, State state) {
-        log.debug("Получен запрос на получение списка предметов, " +
+        log.info("Получен запрос на получение списка предметов, " +
                 "которые сдавались в аренду владельцем ид: {}", userId);
         return bookingService.findAllByOwnerId(userId, state);
     }
 
     @Override
     public BookingDtoOut getById(Long objectId, Long userId) {
-        log.debug("Получен запрос на поиск аренды по идентификатору: {}", objectId);
+        log.info("Получен запрос на поиск аренды по идентификатору: {}", objectId);
         return bookingService.findById(objectId, userId);
     }
 
     @Override
     public BookingDtoOut post(BookingDtoIn bookingDtoIn, Long userId) {
-        log.debug("Получен запрос на создание аренды: {}", bookingDtoIn);
+        log.info("Получен запрос на создание аренды: {}", bookingDtoIn);
         return bookingService.create(bookingDtoIn, userId);
     }
 
     @Override
     public BookingDtoOut put(BookingDtoIn bookingDtoIn, Long userId) {
-        log.debug("Получен запрос на обновление аренды: {}", bookingDtoIn);
+        log.info("Получен запрос на обновление аренды: {}", bookingDtoIn);
         return bookingService.update(bookingDtoIn, userId);
     }
 
     @Override
     public BookingDtoOut patch(Long id, Long userId, Boolean approved) {
-        log.debug("Получен запрос на обновление статуса аренды: {}", approved);
+        log.info("Получен запрос на обновление статуса аренды: {}", approved);
         return bookingService.patch(id, userId, approved);
     }
 }

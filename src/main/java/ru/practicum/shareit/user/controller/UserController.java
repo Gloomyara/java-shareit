@@ -24,7 +24,7 @@ public interface UserController {
 
     @PatchMapping("{id}")
     UserDto patch(@PathVariable @Positive Long id,
-                  @RequestBody Map<String, Object> newFields);
+                  @RequestBody Map<String, Object> fields);
 
     @DeleteMapping("/{id}")
     void delete(@PathVariable @Positive Long id);

@@ -56,7 +56,8 @@ public abstract class AbstractUserReferenceEntityService<I extends Identified, O
 
     public E patchUserReference(Long objectId,
                                 Map<String, Object> newFields) {
-        E oldE = objectRepository.findById(objectId).orElseThrow(EntityNotFoundException::new);
+        E oldE = objectRepository.findById(objectId)
+                .orElseThrow(() -> new EntityNotFoundException(objectId, "Object"));
         E newE = tryUpdateFields(oldE, newFields);
         E updated = objectRepository.save(newE);
         log.debug("Update User: {}.", updated);
@@ -73,7 +74,8 @@ public abstract class AbstractUserReferenceEntityService<I extends Identified, O
     }
 
     public void checkObjectOwner(Long objectId, Long userId) {
-        E e = objectRepository.findById(objectId).orElseThrow(EntityNotFoundException::new);
+        E e = objectRepository.findById(objectId)
+                .orElseThrow(() -> new EntityNotFoundException(objectId, "Object"));
         if (!e.getUser().getId().equals(userId)) {
             throw new ObjectOwnerException("Error! User id:" + userId + " is not own the object id: " + objectId);
         }
