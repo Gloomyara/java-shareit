@@ -3,15 +3,20 @@ package ru.practicum.shareit.item.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.abstraction.userreference.service.AbstractUserReferenceService;
+import ru.practicum.shareit.abstraction.model.DtoIn;
+import ru.practicum.shareit.abstraction.service.AbstractUserReferenceService;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.booking.dto.BookingShort;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.model.BookingShort;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptions.EntityNotFoundException;
+import ru.practicum.shareit.exceptions.item.UnregisteredBookingException;
+import ru.practicum.shareit.exceptions.user.ObjectOwnerException;
+import ru.practicum.shareit.exceptions.user.UserNotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.dto.CommentDtoIn;
 import ru.practicum.shareit.item.comment.dto.CommentDtoOut;
-import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -20,24 +25,22 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.exceptions.EntityNotFoundException;
-import ru.practicum.shareit.exceptions.item.UnregisteredBookingException;
-import ru.practicum.shareit.exceptions.user.ObjectOwnerException;
-import ru.practicum.shareit.exceptions.user.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
-public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, ItemDtoOut, Item> implements ItemService {
+public class ItemServiceImpl extends AbstractUserReferenceService<Item> implements ItemService {
 
+    private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
     private final CommentMapper commentMapper;
     private final BookingMapper bookingMapper;
 
-    protected ItemServiceImpl(ItemMapper mapper,
+    protected ItemServiceImpl(ItemMapper itemMapper,
                               UserRepository userRepository,
                               ObjectMapper objectMapper,
                               ItemRepository itemRepository,
@@ -45,7 +48,8 @@ public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, Ite
                               BookingRepository bookingRepository,
                               CommentMapper commentMapper,
                               BookingMapper bookingMapper) {
-        super(mapper, userRepository, objectMapper, itemRepository);
+        super(userRepository, objectMapper, itemRepository);
+        this.itemMapper = itemMapper;
         this.itemRepository = itemRepository;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
@@ -57,13 +61,17 @@ public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, Ite
     @Transactional(readOnly = true)
     public ItemDtoOut findById(Long itemId, Long userId) {
         checkUserId(userId);
-        Item item = itemRepository.findByIdWithUserAndComments(itemId)
+        Item item = itemRepository.findByIdWithOwnerAndComments(itemId)
                 .orElseThrow(() -> new EntityNotFoundException(itemId, "Item"));
         ItemDtoOut itemDtoOut = toDto(item);
-        boolean isOwner = Objects.equals(item.getUser().getId(), userId);
+        boolean isOwner = Objects.equals(item.getUserReference().getId(), userId);
         if (isOwner) {
-            bookingRepository.findLastBookingByItemId(itemId).ifPresent(b -> itemDtoOut.setLastBooking(toDtoShort(b)));
-            bookingRepository.findNextBookingByItemId(itemId).ifPresent(b -> itemDtoOut.setNextBooking(toDtoShort(b)));
+            bookingRepository.findTopByItemIdAndStatusAndStartBeforeOrderByStartDesc(
+                            itemId, Status.APPROVED, LocalDateTime.now())
+                    .ifPresent(b -> itemDtoOut.setLastBooking(toDtoShort(b)));
+            bookingRepository.findTopByItemIdAndStatusAndStartAfterOrderByStart(
+                            itemId, Status.APPROVED, LocalDateTime.now())
+                    .ifPresent(b -> itemDtoOut.setNextBooking(toDtoShort(b)));
         }
         if (Objects.nonNull(item.getComments())) {
             itemDtoOut.setComments(commentMapper.toDto(item.getComments()));
@@ -72,13 +80,37 @@ public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, Ite
     }
 
     @Override
+    public ItemDtoOut findById(Long objectId) {
+        return toDto(findUserReferenceById(objectId));
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public List<ItemDtoOut> findAllByUserId(Long userId) {
+    public List<ItemDtoOut> findAllByOwnerId(Long userId) {
         checkUserId(userId);
-        List<Item> items = itemRepository.findAllByUserIdWithComments(userId);
-        List<BookingShort> lastBookings = bookingRepository.findLastBookingsByUserId(userId);
-        List<BookingShort> nextBookings = bookingRepository.findNextBookingsByUserId(userId);
+        List<Item> items = itemRepository.findAllByOwnerIdWithComments(userId);
+        List<Long> itemIds = items.stream().map(Item::getId).distinct().collect(Collectors.toList());
+        List<BookingShort> lastBookings = bookingRepository.findLastBookingsByOwnerId(userId, itemIds);
+        List<BookingShort> nextBookings = bookingRepository.findNextBookingsByOwnerId(userId, itemIds);
         return mergeToItemDtoOut(items, lastBookings, nextBookings);
+    }
+
+    @Override
+    public ItemDtoOut create(DtoIn in, Long userId) {
+        checkUserId(userId);
+        return toDto(createUserReference(dtoToEntity(in), userId));
+    }
+
+    @Override
+    public ItemDtoOut update(DtoIn in, Long userId) {
+        checkUserId(userId);
+        return toDto(updateUserReference(dtoToEntity(in), userId));
+    }
+
+    @Override
+    public ItemDtoOut patch(Long id, Map<String, Object> fields, Long userId) {
+        checkObjectOwner(id, userId);
+        return toDto(patchUserReference(id, fields));
     }
 
     @Override
@@ -92,11 +124,11 @@ public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, Ite
     @Transactional
     public CommentDtoOut createComment(Long itemId, Long userId, CommentDtoIn commentDtoIn) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        Item item = itemRepository.findByIdWithUser(itemId)
+        Item item = itemRepository.findByIdWithOwner(itemId)
                 .orElseThrow(() -> new EntityNotFoundException(itemId, "Item"));
         commentCheck(userId, item);
         Comment comment = commentMapper.dtoToEntity(commentDtoIn);
-        comment.setUser(user);
+        comment.setAuthor(user);
         comment.setItem(item);
         comment.setCreated(LocalDateTime.now());
         item.getComments().add(comment);
@@ -105,11 +137,11 @@ public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, Ite
 
 
     private void commentCheck(Long userId, Item item) {
-        if (!bookingRepository.existsBookingByItemIdAndUserId(item.getId(), userId)) {
+        if (!bookingRepository.existsBookingByItemIdAndBookerId(item.getId(), userId)) {
             throw new UnregisteredBookingException("Error can't add comment! User id:" + userId +
                     " have no registered booking to the item.");
         }
-        if (item.getUser().getId().equals(userId)) {
+        if (item.getUserReference().getId().equals(userId)) {
             throw new ObjectOwnerException("Error can't add comment! User id:" + userId + " is item owner.");
         }
     }
@@ -134,5 +166,20 @@ public class ItemServiceImpl extends AbstractUserReferenceService<ItemDtoIn, Ite
 
     private BookingDtoShort toDtoShort(BookingShort bookingShort) {
         return bookingMapper.toDtoShort(bookingShort);
+    }
+
+    @Override
+    public Item dtoToEntity(DtoIn in) {
+        return itemMapper.dtoToEntity(in);
+    }
+
+    @Override
+    public ItemDtoOut toDto(Item item) {
+        return itemMapper.toDto(item);
+    }
+
+    @Override
+    public List<ItemDtoOut> toDto(List<Item> listIn) {
+        return itemMapper.toDto(listIn);
     }
 }

@@ -16,11 +16,11 @@ public class Waiting implements SearchByState {
 
     @Override
     public List<Booking> findAllByOwnerId(Long ownerId) {
-        return bookingRepository.findBookingsByOwnerIdAndStatus(ownerId, Status.WAITING, sort);
+        return bookingRepository.findBookingsByOwnerIdAndStatus(ownerId, Status.WAITING, sortDesc);
     }
 
     @Override
     public List<Booking> findAllByBookerId(Long userId) {
-        return bookingRepository.findBookingsByUserIdAndStatus(userId, Status.WAITING, sort);
+        return bookingRepository.findBookingsByBookerIdAndStatus(userId, Status.WAITING, sortDesc);
     }
 }

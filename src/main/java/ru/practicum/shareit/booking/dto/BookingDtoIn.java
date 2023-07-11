@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.shareit.abstraction.model.Identified;
+import ru.practicum.shareit.abstraction.model.DtoIn;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -19,7 +19,7 @@ import static ru.practicum.shareit.util.UtilConstants.DATE_TIME_PATTERN;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingDtoIn implements Identified {
+public class BookingDtoIn implements DtoIn {
 
     @Positive
     private Long id;

@@ -1,22 +1,19 @@
 package ru.practicum.shareit.booking.mapper;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.abstraction.mapper.AbstractModelMapper;
+import ru.practicum.shareit.abstraction.mapper.ModelMapper;
+import ru.practicum.shareit.abstraction.model.DtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.booking.dto.BookingShort;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingShort;
-import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.user.mapper.UserMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
-public class BookingMapper extends AbstractModelMapper<BookingDtoIn, BookingDtoOut, Booking> {
-
-    private final ItemMapper itemMapper;
-    private final UserMapper userMapper;
+public class BookingMapper implements ModelMapper<Booking> {
 
     @Override
     public BookingDtoOut toDto(Booking booking) {
@@ -24,14 +21,18 @@ public class BookingMapper extends AbstractModelMapper<BookingDtoIn, BookingDtoO
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .booker(userMapper.toDtoShort(booking.getUser()))
-                .item(itemMapper.toDtoShort(booking.getItem()))
                 .status(booking.getStatus())
                 .build();
     }
 
     @Override
-    public Booking dtoToEntity(BookingDtoIn bookingDtoIn) {
+    public List<BookingDtoOut> toDto(List<Booking> entities) {
+        return entities.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Booking dtoToEntity(DtoIn in) {
+        BookingDtoIn bookingDtoIn = (BookingDtoIn) in;
         return Booking.builder()
                 .id(bookingDtoIn.getId())
                 .start(bookingDtoIn.getStart())

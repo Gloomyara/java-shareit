@@ -15,11 +15,11 @@ public class Past implements SearchByState {
 
     @Override
     public List<Booking> findAllByOwnerId(Long ownerId) {
-        return bookingRepository.findAllByOwnerIdWhereEndInPast(ownerId, sort);
+        return bookingRepository.findAllByOwnerIdWhereEndInPast(ownerId, sortDesc);
     }
 
     @Override
     public List<Booking> findAllByBookerId(Long userId) {
-        return bookingRepository.findAllByUserIdWhereEndInPast(userId, sort);
+        return bookingRepository.findAllByBookerIdWhereEndInPast(userId, sortDesc);
     }
 }

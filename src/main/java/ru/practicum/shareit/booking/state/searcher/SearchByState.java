@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface SearchByState {
 
-    Sort sort = Sort.by("start").descending();
+    Sort sortDesc = Sort.by("start").descending();
+
+    Sort sortAsc = Sort.by("start").ascending();
 
     List<Booking> findAllByOwnerId(Long ownerId);
 

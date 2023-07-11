@@ -16,11 +16,11 @@ public class Rejected implements SearchByState {
 
     @Override
     public List<Booking> findAllByOwnerId(Long ownerId) {
-        return bookingRepository.findBookingsByOwnerIdAndStatus(ownerId, Status.REJECTED, sort);
+        return bookingRepository.findBookingsByOwnerIdAndStatus(ownerId, Status.REJECTED, sortDesc);
     }
 
     @Override
     public List<Booking> findAllByBookerId(Long userId) {
-        return bookingRepository.findBookingsByUserIdAndStatus(userId, Status.REJECTED, sort);
+        return bookingRepository.findBookingsByBookerIdAndStatus(userId, Status.REJECTED, sortDesc);
     }
 }

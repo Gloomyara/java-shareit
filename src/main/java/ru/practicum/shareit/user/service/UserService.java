@@ -1,21 +1,22 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserDtoIn;
+import ru.practicum.shareit.user.dto.UserDtoOut;
 
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
 
-    UserDto findById(Long id);
+    UserDtoOut findById(Long id);
 
-    List<UserDto> findAll();
+    List<UserDtoOut> findAll();
 
-    UserDto create(UserDto userDto);
+    UserDtoOut create(UserDtoIn userDtoIn);
 
-    UserDto update(UserDto userDto);
+    UserDtoOut update(UserDtoIn userDtoIn);
 
-    UserDto patch(Long id, Map<String, Object> fields);
+    UserDtoOut patch(Long id, Map<String, Object> fields);
 
     void delete(Long id);
 

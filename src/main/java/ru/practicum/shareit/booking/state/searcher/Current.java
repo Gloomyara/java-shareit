@@ -15,11 +15,11 @@ public class Current implements SearchByState {
 
     @Override
     public List<Booking> findAllByOwnerId(Long ownerId) {
-        return bookingRepository.findAllByOwnerIdWithTimestampsBetweenStartAndEnd(ownerId, sort);
+        return bookingRepository.findAllByOwnerIdWithTimestampsBetweenStartAndEnd(ownerId, sortDesc);
     }
 
     @Override
     public List<Booking> findAllByBookerId(Long userId) {
-        return bookingRepository.findAllByUserIdWithTimestampsBetweenStartAndEnd(userId, sort);
+        return bookingRepository.findAllByBookerIdWithTimestampsBetweenStartAndEnd(userId, sortDesc);
     }
 }

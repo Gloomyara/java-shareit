@@ -15,11 +15,11 @@ public class Future implements SearchByState {
 
     @Override
     public List<Booking> findAllByOwnerId(Long ownerId) {
-        return bookingRepository.findAllByOwnerIdWhereStartInFuture(ownerId, sort);
+        return bookingRepository.findAllByOwnerIdWhereStartInFuture(ownerId, sortDesc);
     }
 
     @Override
     public List<Booking> findAllByBookerId(Long userId) {
-        return bookingRepository.findAllByUserIdWhereStartInFuture(userId, sort);
+        return bookingRepository.findAllByBookerIdWhereStartInFuture(userId, sortDesc);
     }
 }

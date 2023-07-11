@@ -15,11 +15,11 @@ public class All implements SearchByState {
 
     @Override
     public List<Booking> findAllByOwnerId(Long ownerId) {
-        return bookingRepository.findAllByOwnerId(ownerId, sort);
+        return bookingRepository.findAllByOwnerId(ownerId, sortDesc);
     }
 
     @Override
     public List<Booking> findAllByBookerId(Long userId) {
-        return bookingRepository.findAllByUserId(userId, sort);
+        return bookingRepository.findAllByBookerId(userId, sortDesc);
     }
 }

@@ -1,13 +1,15 @@
 package ru.practicum.shareit.abstraction.mapper;
 
+import ru.practicum.shareit.abstraction.model.DtoIn;
+import ru.practicum.shareit.abstraction.model.DtoOut;
+
 import java.util.List;
 
-public interface ModelMapper<I, O, E> {
+public interface ModelMapper<E> {
 
-    O toDto(E entity);
+    DtoOut toDto(E entity);
 
-    List<O> toDto(List<E> entities);
+    E dtoToEntity(DtoIn dtoIn);
 
-    E dtoToEntity(I dtoIn);
-
+    List<? extends DtoOut> toDto(List<E> entities);
 }

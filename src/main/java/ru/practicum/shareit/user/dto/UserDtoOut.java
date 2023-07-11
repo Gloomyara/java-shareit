@@ -10,8 +10,10 @@ import ru.practicum.shareit.abstraction.model.DtoOut;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDtoShort implements DtoOut {
+public class UserDtoOut implements DtoOut {
 
     private Long id;
+    private String name;
+    private String email;
 
 }

@@ -33,9 +33,18 @@ public class Booking implements UserReference {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private User user; //booker
+    private User booker;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Override
+    public User getUserReference() {
+        return booker;
+    }
+
+    @Override
+    public void setUserReference(User user) {
+        this.booker = user;
+    }
 }

@@ -25,11 +25,20 @@ public class Item implements UserReference {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private User user; //owner
+    private User owner;
 
     @OneToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Comment> comments;
 
+    @Override
+    public User getUserReference() {
+        return owner;
+    }
+
+    @Override
+    public void setUserReference(User user) {
+        this.owner = user;
+    }
 }

@@ -3,18 +3,18 @@ package ru.practicum.shareit.abstraction.service;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.shareit.abstraction.mapper.ModelMapper;
+import ru.practicum.shareit.abstraction.model.DtoIn;
+import ru.practicum.shareit.abstraction.model.DtoOut;
 import ru.practicum.shareit.abstraction.model.Identified;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.exceptions.JsonUpdateFieldsException;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public abstract class AbstractService<I, O, E extends Identified> {
+public abstract class AbstractService<E extends Identified> {
 
-    private final ModelMapper<I, O, E> mapper;
     protected final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
@@ -27,15 +27,9 @@ public abstract class AbstractService<I, O, E extends Identified> {
         }
     }
 
-    public E dtoToEntity(I in) {
-        return mapper.dtoToEntity(in);
-    }
+    public abstract E dtoToEntity(DtoIn in);
 
-    public O toDto(E e) {
-        return mapper.toDto(e);
-    }
+    public abstract DtoOut toDto(E e);
 
-    public List<O> toDto(List<E> listIn) {
-        return mapper.toDto(listIn);
-    }
+    public abstract List<? extends DtoOut> toDto(List<E> listIn);
 }

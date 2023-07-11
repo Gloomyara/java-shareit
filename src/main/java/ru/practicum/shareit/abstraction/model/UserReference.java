@@ -4,8 +4,8 @@ import ru.practicum.shareit.user.model.User;
 
 public interface UserReference extends Identified {
 
-    User getUser();
+    User getUserReference();
 
-    void setUser(User user);
+    void setUserReference(User user);
 
 }

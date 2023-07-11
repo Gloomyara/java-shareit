@@ -3,10 +3,12 @@ package ru.practicum.shareit.user.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.abstraction.model.DtoIn;
 import ru.practicum.shareit.abstraction.service.AbstractService;
 import ru.practicum.shareit.exceptions.user.EmailAlreadyRegisteredException;
 import ru.practicum.shareit.exceptions.user.UserNotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserDtoIn;
+import ru.practicum.shareit.user.dto.UserDtoOut;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -15,39 +17,41 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserServiceImpl extends AbstractService<UserDto, UserDto, User> implements UserService {
+public class UserServiceImpl extends AbstractService<User> implements UserService {
+    private final UserMapper mapper;
 
     public UserServiceImpl(UserMapper mapper,
                            UserRepository userRepository,
                            ObjectMapper objectMapper) {
-        super(mapper, userRepository, objectMapper);
+        super(userRepository, objectMapper);
+        this.mapper = mapper;
     }
 
     @Transactional(readOnly = true)
-    public UserDto findById(Long id) {
+    public UserDtoOut findById(Long id) {
         return toDto(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
     @Transactional
-    public UserDto create(UserDto userDTO) {
-        return toDto(userRepository.save(dtoToEntity(userDTO)));
+    public UserDtoOut create(UserDtoIn userDTOIn) {
+        return toDto(userRepository.save(dtoToEntity(userDTOIn)));
     }
 
     @Transactional
-    public UserDto update(UserDto userDto) {
-        checkUserId(userDto.getId());
-        return toDto(userRepository.save(dtoToEntity(userDto)));
+    public UserDtoOut update(UserDtoIn userDtoIn) {
+        checkUserId(userDtoIn.getId());
+        return toDto(userRepository.save(dtoToEntity(userDtoIn)));
     }
 
     @Transactional
-    public UserDto patch(Long id, Map<String, Object> fields) {
+    public UserDtoOut patch(Long id, Map<String, Object> fields) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         checkUserEmail(String.valueOf(fields.get("email")), user);
         return toDto(userRepository.save(tryUpdateFields(user, fields)));
     }
 
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
+    public List<UserDtoOut> findAll() {
         return toDto(userRepository.findAll());
     }
 
@@ -67,5 +71,20 @@ public class UserServiceImpl extends AbstractService<UserDto, UserDto, User> imp
         if (userRepository.existsByEmail(email) && !user.getEmail().equals(email)) {
             throw new EmailAlreadyRegisteredException("Error! Email: " + email + " already registered.");
         }
+    }
+
+    @Override
+    public User dtoToEntity(DtoIn in) {
+        return mapper.dtoToEntity(in);
+    }
+
+    @Override
+    public UserDtoOut toDto(User user) {
+        return mapper.toDto(user);
+    }
+
+    @Override
+    public List<UserDtoOut> toDto(List<User> listIn) {
+        return mapper.toDto(listIn);
     }
 }
