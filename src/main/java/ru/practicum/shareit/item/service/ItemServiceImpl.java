@@ -144,9 +144,10 @@ public class ItemServiceImpl extends AbstractUserReferenceService<Item> implemen
         }
     }
 
-    private ArrayList<ItemDtoOut> mergeToItemDtoOut(List<Item> items,
-                                                    List<BookingShort> lastBookings,
-                                                    List<BookingShort> nextBookings) {
+    private ArrayList<ItemDtoOut> mergeToItemDtoOut(
+            List<Item> items,
+            List<BookingShort> lastBookings,
+            List<BookingShort> nextBookings) {
         Map<Long, ItemDtoOut> map = new HashMap<>();
         for (Item item : items) {
             ItemDtoOut itemDtoOut = toDto(item);

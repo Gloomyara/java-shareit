@@ -39,11 +39,10 @@ public abstract class AbstractUserReferenceService<E extends UserReference>
         return createUserReference(e, userId);
     }
 
-    public E patchUserReference(Long objectId,
-                                Map<String, Object> newFields) {
+    public E patchUserReference(Long objectId, Map<String, Object> fields) {
         E oldE = objectRepository.findById(objectId)
                 .orElseThrow(() -> new EntityNotFoundException(objectId, "Object"));
-        E newE = tryUpdateFields(oldE, newFields);
+        E newE = tryUpdateFields(oldE, fields);
         return objectRepository.save(newE);
     }
 

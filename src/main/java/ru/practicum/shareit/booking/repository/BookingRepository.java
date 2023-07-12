@@ -21,7 +21,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     void deleteByBookerId(Long bookerId);
 
-    @Query(bookingJql + "where b.id = ?1 ")
+    @Query(bookingJql + "where b.id = ?1")
     Optional<Booking> findByIdWithBookerAndItem(Long bookingId);
 
     @Query("select case when (count(b) > 0) then true else false end " +
@@ -44,13 +44,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.start > CURRENT_TIMESTAMP")
     List<Booking> findAllByOwnerIdWhereStartInFuture(Long itemOwnerId, Sort sort);
 
-    @Query(bookingJql +
-            "where b.item.owner.id = ?1 " +
+    @Query(bookingJql + "where b.item.owner.id = ?1 " +
             "and b.end < CURRENT_TIMESTAMP")
     List<Booking> findAllByOwnerIdWhereEndInPast(Long itemOwnerId, Sort sort);
 
-    @Query(bookingJql +
-            "where b.booker.id = ?1 " +
+    @Query(bookingJql + "where b.booker.id = ?1 " +
             "and b.start > CURRENT_TIMESTAMP")
     List<Booking> findAllByBookerIdWhereStartInFuture(Long bookerId, Sort sort);
 
@@ -80,13 +78,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<BookingShort> findTopByItemIdAndStatusAndStartAfterOrderByStart(
             Long itemId, Status status, LocalDateTime time);
 
-    /*@Query("select b.id, b.booker.id, b.item.id, b.start as start from Booking b " +
-            "where b.booker.id = ?1 " +
-            "and b.status = 'APPROVED' " +
-            "and b.start <= CURRENT_TIMESTAMP " +
-            "group by b.item.id " +
-            "having b.start = MAX(start)")
-    как только не пробовал, без nativeQuery не получается лист получить*/
     @Query(nativeQuery = true,
             value = "select b.id as id, b.booker_id as bookerId, b.item_id as itemId " +
                     "from booking b " +
@@ -100,13 +91,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "and b.start_time = l.max")
     List<BookingShort> findLastBookingsByOwnerId(Long itemOwnerId);
 
-    /*@Query("select b.id, b.booker.id, b.item.id, b.start as start from Booking b " +
-            "where b.booker.id = ?1 " +
-            "and b.status = 'APPROVED' " +
-            "and b.start >= CURRENT_TIMESTAMP " +
-            "group by b.item.id " +
-            "having b.start = MIN(start)")
-    как только не пробовал, без nativeQuery не получается лист получить*/
     @Query(nativeQuery = true,
             value = "select b.id as id, b.booker_id as bookerId, b.item_id as itemId " +
                     "from booking b " +
