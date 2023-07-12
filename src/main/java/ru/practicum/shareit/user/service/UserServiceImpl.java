@@ -1,47 +1,90 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.UserMapper;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.abstraction.model.DtoIn;
+import ru.practicum.shareit.abstraction.service.AbstractService;
+import ru.practicum.shareit.exceptions.user.EmailAlreadyRegisteredException;
+import ru.practicum.shareit.exceptions.user.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserDtoIn;
+import ru.practicum.shareit.user.dto.UserDtoOut;
+import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.user.model.UserMapper.dtoToUser;
-import static ru.practicum.shareit.user.model.UserMapper.toUserDto;
+import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
-    private final UserRepository repository;
+public class UserServiceImpl extends AbstractService<User> implements UserService {
+    private final UserMapper mapper;
 
-    @Override
-    public Collection<UserDto> getAllUsers() {
-        return repository.findAll().stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
+    public UserServiceImpl(UserMapper mapper,
+                           UserRepository userRepository,
+                           ObjectMapper objectMapper) {
+        super(userRepository, objectMapper);
+        this.mapper = mapper;
     }
 
-    @Override
-    public UserDto saveUser(UserDto userDto) {
-        return toUserDto(repository.create(dtoToUser(userDto)));
+    @Transactional(readOnly = true)
+    public UserDtoOut findById(Long id) {
+        return toDto(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
-    @Override
-    public UserDto getById(Long id) {
-        return toUserDto(repository.getById(id).orElse(null));
+    @Transactional
+    public UserDtoOut create(UserDtoIn userDTOIn) {
+        return toDto(userRepository.save(dtoToEntity(userDTOIn)));
     }
 
-    @Override
-    public UserDto patch(Long id, UserDto userDto) {
-        repository.containsOrElseThrow(id);
-        return toUserDto(repository.patch(id, userDto));
+    @Transactional
+    public UserDtoOut update(UserDtoIn userDtoIn) {
+        checkUserId(userDtoIn.getId());
+        return toDto(userRepository.save(dtoToEntity(userDtoIn)));
     }
 
-    @Override
+    @Transactional
+    public UserDtoOut patch(Long id, Map<String, Object> fields) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        checkUserEmail(String.valueOf(fields.get("email")), user);
+        return toDto(userRepository.save(tryUpdateFields(user, fields)));
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDtoOut> findAll() {
+        return toDto(userRepository.findAll());
+    }
+
+    @Transactional
     public void delete(Long id) {
-        repository.delete(id);
+        checkUserId(id);
+        userRepository.deleteById(id);
+    }
+
+    private void checkUserId(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException(id);
+        }
+    }
+
+    private void checkUserEmail(String email, User user) {
+        if (userRepository.existsByEmail(email) && !user.getEmail().equals(email)) {
+            throw new EmailAlreadyRegisteredException("Error! Email: " + email + " already registered.");
+        }
+    }
+
+    @Override
+    public User dtoToEntity(DtoIn in) {
+        return mapper.dtoToEntity(in);
+    }
+
+    @Override
+    public UserDtoOut toDto(User user) {
+        return mapper.toDto(user);
+    }
+
+    @Override
+    public List<UserDtoOut> toDto(List<User> listIn) {
+        return mapper.toDto(listIn);
     }
 }

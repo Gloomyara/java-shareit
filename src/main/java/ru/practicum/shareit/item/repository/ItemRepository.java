@@ -1,24 +1,35 @@
 package ru.practicum.shareit.item.repository;
 
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
-public interface ItemRepository {
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    Collection<Item> findByUserId(long userId);
+    List<Item> findAllByOwnerId(Long userId);
 
-    Optional<Item> getById(long itemId);
+    void deleteByOwnerId(Long userId);
 
-    Item patch(Item item);
+    List<Item> findAllByNameContainsIgnoreCaseOrDescriptionContainsIgnoreCaseAndAvailableIsTrue(
+            String name, String description);
 
-    Collection<Item> itemsSearch(String text);
+    @Query("select it from Item it " +
+            "JOIN FETCH it.owner " +
+            "where it.id = ?1")
+    Optional<Item> findByIdWithOwner(Long itemId);
 
-    Item save(Item item);
+    @Query("select it from Item it " +
+            "LEFT JOIN FETCH it.comments " +
+            "where it.owner.id = ?1")
+    List<Item> findAllByOwnerIdWithComments(Long userId);
 
-    void deleteByUserIdAndItemId(long userId, long itemId);
+    @Query("select it from Item it " +
+            "LEFT JOIN FETCH it.owner " +
+            "LEFT JOIN FETCH it.comments " +
+            "where it.id = ?1")
+    Optional<Item> findByIdWithOwnerAndComments(Long itemId);
 
-    void deleteByUserId(long userId);
 }
