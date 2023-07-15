@@ -14,10 +14,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import ru.practicum.shareit.exceptions.EntityAlreadyExistException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.exceptions.JsonUpdateFieldsException;
-import ru.practicum.shareit.exceptions.UnknownStateException;
 import ru.practicum.shareit.exceptions.booking.BookingAlreadyApprovedException;
 import ru.practicum.shareit.exceptions.booking.BookingAlreadyRegisteredException;
 import ru.practicum.shareit.exceptions.booking.RentTimeConstraintException;
+import ru.practicum.shareit.exceptions.booking.UnknownStateException;
 import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
 import ru.practicum.shareit.exceptions.item.UnregisteredBookingException;
 import ru.practicum.shareit.exceptions.user.EmailAlreadyRegisteredException;

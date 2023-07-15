@@ -6,8 +6,14 @@ public interface BookingShort extends DtoOut {
 
     Long getId();
 
+    void setId(Long id);
+
     Long getBookerId();
 
+    void setBookerId(Long bookerId);
+
     Long getItemId();
+
+    void setItemId(Long itemId);
 
 }

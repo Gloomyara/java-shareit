@@ -13,53 +13,52 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Map;
 
+import static ru.practicum.shareit.util.UtilConstants.USER_PATH;
+
+
 @RestController
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping(USER_PATH)
 @Slf4j
 public class UserController {
 
-    private final UserService service;
+    private final UserService userService;
 
     @GetMapping
     public List<UserDtoOut> getAll() {
-        log.info("Получен запрос на получение списка всех пользователей");
-        return service.findAll();
+        log.info("Received GET {} request.", USER_PATH);
+        return userService.findAll();
     }
 
     @GetMapping("{id}")
     public UserDtoOut getById(@PathVariable @Positive Long id) {
-        log.info("Получен запрос на получение данных о пользователе: {}", id);
-        return service.findById(id);
+        log.info("Received GET {}/{} request.", USER_PATH, id);
+        return userService.findById(id);
     }
 
     @PostMapping
-    UserDtoOut post(@Valid @RequestBody UserDtoIn dtoIn) {
-        log.info("Получен запрос на регистрацию пользователя: {}", dtoIn);
-        if (dtoIn.getEmail() == null) {
-            log.warn("Error! Email cannot be null. {}", dtoIn);
-            throw new IllegalArgumentException("Error! Email cannot be null");
-        }
-        return service.create(dtoIn);
+    public UserDtoOut post(@Valid @RequestBody UserDtoIn dtoIn) {
+        log.info("Received POST {} request, userDtoIn = {}", USER_PATH, dtoIn);
+        return userService.create(dtoIn);
     }
 
     @PutMapping
-    UserDtoOut put(@Valid @RequestBody UserDtoIn dtoIn) {
-        log.info("Получен запрос на обновление данных о пользователе: {}", dtoIn);
-        return service.update(dtoIn);
+    public UserDtoOut put(@Valid @RequestBody UserDtoIn dtoIn) {
+        log.info("Received PUT {} request, userDtoIn = {}", USER_PATH, dtoIn);
+        return userService.update(dtoIn);
     }
 
     @PatchMapping("{id}")
-    UserDtoOut patch(@PathVariable @Positive Long id,
-                     @RequestBody Map<String, Object> fields) {
-        log.info("Получен запрос на обновление данных о пользователе ид: {}, {}", id, fields);
-        return service.patch(id, fields);
+    public UserDtoOut patch(@PathVariable @Positive Long id,
+                            @RequestBody Map<String, Object> fields) {
+        log.info("Received PATCH {}/{} request, fields = {}", USER_PATH, id, fields);
+        return userService.patch(id, fields);
     }
 
     @DeleteMapping("/{id}")
-    void delete(@PathVariable @Positive Long id) {
-        log.info("Получен запрос на удаление данных о пользователе: {}", id);
-        service.delete(id);
+    public void delete(@PathVariable @Positive Long id) {
+        log.info("Received DELETE {}/{} request.", USER_PATH, id);
+        userService.delete(id);
     }
 }

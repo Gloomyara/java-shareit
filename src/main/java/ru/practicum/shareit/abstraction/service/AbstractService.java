@@ -5,17 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.abstraction.model.DtoIn;
 import ru.practicum.shareit.abstraction.model.DtoOut;
-import ru.practicum.shareit.abstraction.model.Identified;
+import ru.practicum.shareit.abstraction.model.EntityClass;
 import ru.practicum.shareit.exceptions.JsonUpdateFieldsException;
-import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public abstract class AbstractService<E extends Identified> {
+public abstract class AbstractService<I extends DtoIn, O extends DtoOut, E extends EntityClass> {
 
-    protected final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
     protected E tryUpdateFields(E entity, Map<String, Object> fields) {
@@ -27,9 +25,10 @@ public abstract class AbstractService<E extends Identified> {
         }
     }
 
-    public abstract E dtoToEntity(DtoIn in);
+    public abstract E toEntity(I dtoIn);
 
-    public abstract DtoOut toDto(E e);
+    public abstract O toDto(E entity);
 
-    public abstract List<? extends DtoOut> toDto(List<E> listIn);
+    public abstract List<O> toDto(List<E> dtoInList);
+
 }

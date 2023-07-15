@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.comment;
 
 import lombok.*;
-import ru.practicum.shareit.abstraction.model.Identified;
+import ru.practicum.shareit.abstraction.model.EntityClass;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment implements Identified {
+public class Comment implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

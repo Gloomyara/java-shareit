@@ -28,4 +28,6 @@ public class ItemDtoIn implements DtoIn {
     @NotNull
     private Boolean available;
 
+    private Long requestId;
+
 }
