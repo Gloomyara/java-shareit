@@ -172,4 +172,17 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email", is(userDtoOut.getEmail())));
         verify(userService, times(1)).patch(anyLong(), anyMap());
     }
+
+    @SneakyThrows
+    @Test
+    void deleteUser() {
+        Long userId = 1L;
+        mvc.perform(delete(userPath + "/{id}", userId)
+                        .content(mapper.writeValueAsString(Map.of()))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(userService, times(1)).delete(anyLong());
+    }
 }

@@ -18,6 +18,7 @@ import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.booking.state.State;
 import ru.practicum.shareit.booking.state.searcher.*;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
+import ru.practicum.shareit.exceptions.booking.BookingAlreadyApprovedException;
 import ru.practicum.shareit.exceptions.booking.RentTimeConstraintException;
 import ru.practicum.shareit.exceptions.booking.UnknownStateException;
 import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
@@ -339,10 +340,14 @@ class BookingServiceTest {
     }
 
     @Test
-    void patch_whenBookingStatusIsNotWaiting_assertThrowsObjectOwnerException() {
+    void patch_whenBookingStatusIsNotWaiting_assertThrowsBookingAlreadyApprovedException() {
         BookingRepository bookingRepository = Mockito.mock(BookingRepository.class);
         ReflectionTestUtils.setField(bookingService, "repository", bookingRepository);
-        assertThrows(ObjectOwnerException.class,
+        when(bookingRepository.existsByIdAndItemOwnerId(anyLong(), anyLong()))
+                .thenReturn(true);
+        when(bookingRepository.existsByIdAndStatus(anyLong(), any(Status.class)))
+                .thenReturn(false);
+        assertThrows(BookingAlreadyApprovedException.class,
                 () -> bookingService.patch(generator.nextLong(), generator.nextLong(), generator.nextBoolean()));
         verify(bookingRepository, never())
                 .save(any(Booking.class));
