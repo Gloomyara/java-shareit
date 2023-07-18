@@ -1,8 +1,9 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.abstraction.model.UserReference;
+import ru.practicum.shareit.abstraction.model.EntityClass;
 import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item implements UserReference {
+public class Item implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,18 +28,14 @@ public class Item implements UserReference {
     @EqualsAndHashCode.Exclude
     private User owner;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Request request;
+
+    @OneToMany
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Comment> comments;
 
-    @Override
-    public User getUserReference() {
-        return owner;
-    }
-
-    @Override
-    public void setUserReference(User user) {
-        this.owner = user;
-    }
 }

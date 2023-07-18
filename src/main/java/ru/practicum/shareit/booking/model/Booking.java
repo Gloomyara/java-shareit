@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
 import lombok.*;
-import ru.practicum.shareit.abstraction.model.UserReference;
+import ru.practicum.shareit.abstraction.model.EntityClass;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Booking implements UserReference {
+public class Booking implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,13 +38,4 @@ public class Booking implements UserReference {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Override
-    public User getUserReference() {
-        return booker;
-    }
-
-    @Override
-    public void setUserReference(User user) {
-        this.booker = user;
-    }
 }

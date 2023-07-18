@@ -3,7 +3,7 @@ package ru.practicum.shareit.booking.state.searcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.state.State;
-import ru.practicum.shareit.exceptions.UnknownStateException;
+import ru.practicum.shareit.exceptions.booking.UnknownStateException;
 
 import java.util.Map;
 

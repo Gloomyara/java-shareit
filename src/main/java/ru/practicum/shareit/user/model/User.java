@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.abstraction.model.Identified;
+import ru.practicum.shareit.abstraction.model.EntityClass;
 
 import javax.persistence.*;
 
@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Identified {
+public class User implements EntityClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

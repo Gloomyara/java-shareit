@@ -5,8 +5,4 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long id) {
         super("Error! User id:" + id + "not found.");
     }
-
-    public UserNotFoundException(String message) {
-        super(message);
-    }
 }

@@ -14,5 +14,9 @@ public class ItemDtoShort implements DtoOut {
 
     private Long id;
     private String name;
+    private String description;
+    private boolean available;
+    private Long requestId;
+    private Long ownerId;
 
 }

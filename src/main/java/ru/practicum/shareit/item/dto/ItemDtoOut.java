@@ -23,5 +23,6 @@ public class ItemDtoOut implements DtoOut {
     private BookingDtoShort lastBooking;
     private BookingDtoShort nextBooking;
     private List<CommentDtoOut> comments;
+    private Long requestId;
 
 }

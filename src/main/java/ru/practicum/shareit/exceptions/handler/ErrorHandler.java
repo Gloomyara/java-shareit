@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ru.practicum.shareit.exceptions.EntityAlreadyExistException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.exceptions.JsonUpdateFieldsException;
-import ru.practicum.shareit.exceptions.UnknownStateException;
 import ru.practicum.shareit.exceptions.booking.BookingAlreadyApprovedException;
-import ru.practicum.shareit.exceptions.booking.BookingAlreadyRegisteredException;
 import ru.practicum.shareit.exceptions.booking.RentTimeConstraintException;
+import ru.practicum.shareit.exceptions.booking.UnknownStateException;
 import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
 import ru.practicum.shareit.exceptions.item.UnregisteredBookingException;
 import ru.practicum.shareit.exceptions.user.EmailAlreadyRegisteredException;
@@ -34,7 +32,6 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             JsonUpdateFieldsException.class,
-            EntityAlreadyExistException.class,
             EmailAlreadyRegisteredException.class
     })
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -62,7 +59,6 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             BookingAlreadyApprovedException.class,
-            BookingAlreadyRegisteredException.class,
             RentTimeConstraintException.class,
             UnregisteredBookingException.class,
             ItemNotAvailableException.class,
