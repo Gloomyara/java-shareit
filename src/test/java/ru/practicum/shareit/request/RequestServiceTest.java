@@ -17,6 +17,7 @@ import ru.practicum.shareit.request.dto.RequestDtoOut;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
+import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.request.service.RequestServiceImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -36,7 +37,7 @@ import static ru.practicum.shareit.util.UtilConstants.DEFAULT_LIMIT;
 @ExtendWith(MockitoExtension.class)
 class RequestServiceTest {
 
-    private RequestServiceImpl requestService;
+    private RequestService requestService;
     private final EasyRandom generator = new EasyRandom();
 
     private final int from = Integer.parseInt(DEFAULT_FROM);

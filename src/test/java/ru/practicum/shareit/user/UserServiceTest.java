@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.dto.UserDtoOut;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 import ru.practicum.shareit.util.config.ObjectMapperConfig;
 
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    private UserServiceImpl userService;
+    private UserService userService;
     private final EasyRandom generator = new EasyRandom();
 
     @BeforeEach

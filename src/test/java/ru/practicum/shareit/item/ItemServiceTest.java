@@ -25,8 +25,10 @@ import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemShort;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
@@ -50,7 +52,7 @@ import static ru.practicum.shareit.util.UtilConstants.DEFAULT_LIMIT;
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
 
-    private ItemServiceImpl itemService;
+    private ItemService itemService;
     private final EasyRandom generator = new EasyRandom();
     private final ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
     private final BookingShort next = factory.createProjection(BookingShort.class);
@@ -390,8 +392,10 @@ class ItemServiceTest {
         BookingRepository bookingRepository = Mockito.mock(BookingRepository.class);
         ReflectionTestUtils.setField(itemService, "bookingRepository", bookingRepository);
         User owner = generator.nextObject(User.class);
-        Item item = generator.nextObject(Item.class);
-        item.setOwner(owner);
+        ItemShort item = factory.createProjection(ItemShort.class);
+        item.setOwnerId(owner.getId());
+        Request request = generator.nextObject(Request.class);
+        item.setRequest(request);
         next.setId(generator.nextLong());
         next.setItemId(item.getId());
         next.setBookerId(generator.nextLong());

@@ -21,6 +21,7 @@ import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemShort;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.Request;
@@ -91,7 +92,7 @@ public class ItemServiceImpl extends AbstractService<ItemDtoIn, ItemDtoOut, Item
     @Transactional(readOnly = true)
     public List<ItemDtoOut> findAllByOwnerId(Integer from, Integer limit, Long ownerId) {
         checkUserId(ownerId);
-        List<Item> items = repository.findAllByOwnerIdWithComments(ownerId,
+        List<ItemShort> items = repository.findAllByOwnerIdWithComments(ownerId,
                 new PageRequester(from, limit, ITEM_SORT)).toList();
         List<BookingShort> lastBookings = bookingRepository.findLastBookingsByItemOwnerId(ownerId);
         List<BookingShort> nextBookings = bookingRepository.findNextBookingsByItemOwnerId(ownerId);
@@ -160,12 +161,12 @@ public class ItemServiceImpl extends AbstractService<ItemDtoIn, ItemDtoOut, Item
         return item;
     }
 
-    private List<ItemDtoOut> mergeToDtoOut(List<Item> items,
+    private List<ItemDtoOut> mergeToDtoOut(List<ItemShort> items,
                                            List<BookingShort> lastBookings,
                                            List<BookingShort> nextBookings) {
         Map<Long, ItemDtoOut> map = new HashMap<>();
-        for (Item item : items) {
-            ItemDtoOut itemDtoOut = toDto(item);
+        for (ItemShort item : items) {
+            ItemDtoOut itemDtoOut = shortToDto(item);
             itemDtoOut.setComments(toCommentDto(item.getComments()));
             map.put(item.getId(), itemDtoOut);
         }
@@ -234,11 +235,25 @@ public class ItemServiceImpl extends AbstractService<ItemDtoIn, ItemDtoOut, Item
         return itemDtoOut;
     }
 
+    public ItemDtoOut shortToDto(ItemShort entity) {
+        if (entity == null) return null;
+        ItemDtoOut itemDtoOut = itemMapper.shortToDto(entity);
+        itemDtoOut.setComments(toCommentDto(entity.getComments()));
+        return itemDtoOut;
+    }
+
     @Override
     public List<ItemDtoOut> toDto(List<Item> dtoInList) {
         if (dtoInList == null) {
             return null;
         }
         return dtoInList.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public List<ItemDtoOut> shortToDto(List<ItemShort> dtoInList) {
+        if (dtoInList == null) {
+            return null;
+        }
+        return dtoInList.stream().map(this::shortToDto).collect(Collectors.toList());
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemShort;
 
 import java.util.Optional;
 
@@ -25,10 +26,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "where it.id = ?1")
     Optional<Item> findByIdWithOwnerAndComments(Long itemId);
 
-    @EntityGraph(attributePaths = {"comments"})
+    @EntityGraph(attributePaths = {"comments", "request"})
     @Query("select it from Item it " +
             "where it.owner.id = ?1")
-    Page<Item> findAllByOwnerIdWithComments(Long ownerId, Pageable pageable);
+    Page<ItemShort> findAllByOwnerIdWithComments(Long ownerId, Pageable pageable);
 
     boolean existsByIdAndOwnerId(Long itemId, Long ownerId);
 

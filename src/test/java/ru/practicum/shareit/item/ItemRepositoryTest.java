@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemShort;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -57,7 +58,7 @@ class ItemRepositoryTest {
 
     @Test
     void findAllByOwnerIdWithComments() {
-        Page<Item> foundItems = itemRepository.findAllByOwnerIdWithComments(user.getId(), Pageable.ofSize(10));
+        Page<ItemShort> foundItems = itemRepository.findAllByOwnerIdWithComments(user.getId(), Pageable.ofSize(10));
         assertThat(foundItems.toList()).hasSize(1);
     }
 

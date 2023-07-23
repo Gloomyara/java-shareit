@@ -13,7 +13,7 @@ import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.booking.service.BookingServiceImpl;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.state.State;
 import ru.practicum.shareit.item.dto.ItemDtoShort;
 import ru.practicum.shareit.user.dto.UserDtoShort;
@@ -38,7 +38,7 @@ import static ru.practicum.shareit.util.UtilConstants.*;
 class BookingControllerTest {
 
     @MockBean
-    private BookingServiceImpl bookingService;
+    private BookingService bookingService;
     @Autowired
     private ObjectMapper mapper;
     @Autowired

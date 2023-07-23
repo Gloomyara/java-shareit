@@ -14,7 +14,7 @@ import ru.practicum.shareit.item.comment.dto.CommentDtoOut;
 import ru.practicum.shareit.item.controller.ItemController;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.item.service.ItemService;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -37,7 +37,7 @@ import static ru.practicum.shareit.util.UtilConstants.OWNER_ID_HEADER;
 class ItemControllerTest {
 
     @MockBean
-    private ItemServiceImpl itemService;
+    private ItemService itemService;
     @Autowired
     private ObjectMapper mapper;
     @Autowired

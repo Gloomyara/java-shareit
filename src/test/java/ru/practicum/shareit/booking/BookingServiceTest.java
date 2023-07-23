@@ -14,6 +14,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.booking.state.State;
 import ru.practicum.shareit.booking.state.searcher.*;
@@ -46,7 +47,7 @@ import static ru.practicum.shareit.util.UtilConstants.DEFAULT_LIMIT;
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
 
-    private BookingServiceImpl bookingService;
+    private BookingService bookingService;
 
     private final EasyRandom generator = new EasyRandom();
 
