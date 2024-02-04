@@ -67,7 +67,7 @@ Id текущего пользователя передается в загол�
 ## Сборка
 1. Клонируйте репозиторий:
 ```Bash
-git clone https://github.com/OrlovDeniss/java-shareit.git
+git clone https://github.com/Gloomyara/java-shareit.git
 ```
 2. Перейдите в каталог проекта: 
 ```Bash
